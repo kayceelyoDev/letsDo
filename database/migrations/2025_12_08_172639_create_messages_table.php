@@ -10,7 +10,9 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('feedbox_messages', function (Blueprint $table) {
+        Schema::dropIfExists('messages');
+        
+        Schema::create('messages', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignUuid('box_id')->constrained()->onDelete('cascade');
