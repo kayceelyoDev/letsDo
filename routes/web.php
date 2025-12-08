@@ -1,5 +1,7 @@
 <?php
 
+use App\Livewire\CreateBox;
+use App\Livewire\FeedBox;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
@@ -8,9 +10,15 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+
+Route::prefix('main')->middleware('auth')->group(function(){
+    Route::view('/', 'dashboard')->name('dashboard');
+    Route::get('/addbox', CreateBox::class)->name('createbox');
+});
+
+Route::prefix('feedbox')->middleware('auth')->group(function(){
+    Route::get('/{box}', FeedBox::class)->name('feedbox');
+});
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');

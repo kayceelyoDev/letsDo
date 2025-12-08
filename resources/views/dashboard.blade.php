@@ -1,18 +1,29 @@
 <x-layouts.app :title="__('Dashboard')">
-    <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
-        <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-                <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20" />
+    <div class="min-h-screen py-12 ">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
+            <div class="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+
+                <div class="w-full md:w-1/2 flex gap-2">
+                    <flux:input 
+                        icon="magnifying-glass" 
+                        placeholder="Enter box link or code..." 
+                        class="flex-1" 
+                    />
+                    <flux:button>Join</flux:button>
+                </div>
+
+                <div class="w-full md:w-auto">
+                    <livewire:create-box />
+                </div>
             </div>
-            <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-                <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20" />
+
+            <div class="flex items-center mb-6 px-1">
+                <flux:heading size="lg" level="2">Your Joined Boxes</flux:heading>
+                <flux:badge color="zinc" size="sm" class="ml-3">3</flux:badge>
             </div>
-            <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-                <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20" />
-            </div>
-        </div>
-        <div class="relative h-full flex-1 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-            <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20" />
+
+            <livewire:box-list/>
         </div>
     </div>
 </x-layouts.app>
