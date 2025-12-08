@@ -17,7 +17,7 @@ Route::prefix('main')->middleware('auth')->group(function(){
 });
 
 Route::prefix('feedbox')->middleware('auth')->group(function(){
-    Route::get('/{box}', FeedBox::class)->name('feedbox');
+    Route::get('/{box}', Feedbox::class)->name('feedbox');
 });
 
 Route::middleware(['auth'])->group(function () {
