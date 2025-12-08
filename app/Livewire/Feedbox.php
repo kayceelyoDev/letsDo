@@ -9,7 +9,7 @@ class Feedbox extends Component
 {
     public $activeTab = 'latest';
     public $showModal = false;
-    public box $box;
+    public Box $box;
     // Form Inputs (Removed $newTag)
     public $newContent = '';
     
@@ -59,7 +59,25 @@ class Feedbox extends Component
 
     public function createMessage()
     {
-      
+        if(empty($this->newContent)) return;
+
+        // Add to userMessages with a default Tag
+        array_unshift($this->userMessages, [
+            'id' => rand(1000, 9999),
+            'username' => 'You',
+            'avatar_initial' => 'Y',
+            'time_ago' => 'Just now',
+            'content' => $this->newContent,
+            'upvotes' => 0,
+            'downvotes' => 0,
+            
+            // Default Tag since input was removed
+            'tag' => 'Confession', 
+            'tag_color' => 'zinc', 
+        ]);
+
+        $this->newContent = '';
+        $this->showModal = false;
     }
     public function mount(box $box){
         $this->box = $box;
