@@ -1,7 +1,7 @@
 <?php
 
 use App\Livewire\CreateBox;
-use App\Livewire\FeedBox;
+use App\Livewire\Feedbox;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
