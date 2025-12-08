@@ -9,7 +9,7 @@ class Feedbox extends Component
 {
     public $activeTab = 'latest';
     public $showModal = false;
-    public Box $box;
+    public box $box;
     // Form Inputs (Removed $newTag)
     public $newContent = '';
     
