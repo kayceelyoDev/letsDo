@@ -2,54 +2,37 @@
 
 namespace App\Livewire;
 
-use App\Models\box;
+use App\Models\Box;
+use App\Models\Message;
+use App\Services\MessagesServices;
+use Flux\Flux;
 use Livewire\Component;
 
 class Feedbox extends Component
 {
+    // Properties
+    public Box $box;
     public $activeTab = 'latest';
     public $showModal = false;
-    public Box $box;
-    // Form Inputs (Removed $newTag)
-    public $newContent = '';
+    public $content = '';
+    public $errorMessages;
+    public $editingMessageId = null;
     
-    // Store user messages
-    public $userMessages = []; 
+    // We don't store $userMessages as a public property anymore 
+    // to prevent large payloads. We pass it directly in render().
 
-    public function getMessagesProperty()
+    // Dependency Injection
+    protected MessagesServices $messageService;
+
+    // Boot method injects the service automatically
+    public function boot(MessagesServices $messageService)
     {
-        $dummyMessages = [
-            [
-                'id' => 1,
-                'username' => 'alex_dev',
-                'avatar_initial' => 'A',
-                'time_ago' => '2 hours ago',
-                'content' => 'Just realized that PHP is basically the elder scroll of the web.',
-                'upvotes' => 120,
-                'downvotes' => 5,
-                'tag' => 'Hot Take',
-                'tag_color' => 'red', 
-            ],
-            [
-                'id' => 2,
-                'username' => 'sarah_codes',
-                'avatar_initial' => 'S',
-                'time_ago' => '5 mins ago',
-                'content' => 'Does anyone else feel like their code works on the first try only when they are about to give up?',
-                'upvotes' => 12,
-                'downvotes' => 0,
-                'tag' => 'Question',
-                'tag_color' => 'blue',
-            ],
-        ];
+        $this->messageService = $messageService;
+    }
 
-        $allMessages = array_merge($this->userMessages, $dummyMessages);
-
-        return collect($allMessages)->sortByDesc(function ($item) {
-            return $this->activeTab === 'top' 
-                ? ($item['upvotes'] - $item['downvotes']) 
-                : $item['id'];
-        });
+    public function mount(Box $box)
+    {
+        $this->box = $box;
     }
 
     public function setTab($tab)
@@ -57,35 +40,62 @@ class Feedbox extends Component
         $this->activeTab = $tab;
     }
 
-    public function createMessage()
+    public function saveMessage()
     {
-        if(empty($this->newContent)) return;
+        $this->validate(['content' => 'string|required|max:1000']);
 
-        // Add to userMessages with a default Tag
-        array_unshift($this->userMessages, [
-            'id' => rand(1000, 9999),
-            'username' => 'You',
-            'avatar_initial' => 'Y',
-            'time_ago' => 'Just now',
-            'content' => $this->newContent,
-            'upvotes' => 0,
-            'downvotes' => 0,
-            
-            // Default Tag since input was removed
-            'tag' => 'Confession', 
-            'tag_color' => 'zinc', 
-        ]);
+        try {
+            $this->messageService->createOrUpdate(
+                userId: auth()->id(),
+                boxId: $this->box->id,
+                content: $this->content,
+                messageId: $this->editingMessageId
+            );
 
-        $this->newContent = '';
-        $this->showModal = false;
+            $this->resetModal();
+            Flux::modals()->close();
+
+        } catch (\Exception $e) {
+            $this->errorMessages = $e->getMessage();
+        }
     }
-    public function mount(box $box){
-        $this->box = $box;
+
+    public function editMessage(Message $message)
+    {
+        // Simple UI check (Service handles the real security check on save)
+        if ($message->user_id !== auth()->id()) return;
+
+        $this->editingMessageId = $message->id;
+        $this->content = $message->content;
+        $this->showModal = true;
+    }
+
+    public function deleteMessage($messageId)
+    {
+        try {
+            $this->messageService->deleteMessage(auth()->id(), $messageId);
+        } catch (\Exception $e) {
+            $this->errorMessages = $e->getMessage();
+        }
+    }
+
+    public function toggleVote($messageId, $type)
+    {
+        $this->messageService->toggleVote(auth()->id(), $messageId, $type);
+    }
+
+    public function resetModal()
+    {
+        $this->reset('content', 'errorMessages', 'editingMessageId', 'showModal');
     }
 
     public function render()
     {
-    
-        return view('livewire.feedbox');
+        // Clean and performant fetching via Service
+        $messages = $this->messageService->getMessagesForBox($this->box, $this->activeTab);
+
+        return view('livewire.feedbox', [
+            'userMessages' => $messages
+        ]);
     }
 }

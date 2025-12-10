@@ -11,7 +11,7 @@ Route::get('/', function () {
 })->name('home');
 
 
-Route::prefix('main')->middleware('auth')->group(function(){
+Route::prefix('dashboard')->middleware('auth')->group(function(){
     Route::view('/', 'dashboard')->name('dashboard');
     Route::get('/addbox', CreateBox::class)->name('createbox');
 });

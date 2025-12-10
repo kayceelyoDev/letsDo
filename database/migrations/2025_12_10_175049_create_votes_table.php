@@ -10,14 +10,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('messages', function (Blueprint $table) {
+        Schema::create('votes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignUuid('box_id')->constrained()->onDelete('cascade');
-            $table->text('content');
-            $table->integer('upvotes')->default(0);
-            $table->integer('downvotes')->default(0);
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('message_id')->constrained('messages')->cascadeOnDelete(); // Assuming table is 'messages'
+            $table->enum('type', ['up', 'down']);
+            $table->unique(['user_id', 'message_id']);
             $table->timestamps();
+
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('messages');
+        Schema::dropIfExists('votes');
     }
 };
