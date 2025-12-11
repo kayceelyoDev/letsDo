@@ -161,7 +161,7 @@
                         <div
                             class="rounded-2xl overflow-hidden mt-10 aspect-auto shadow-lg border border-zinc-200 dark:border-zinc-800 group-hover:scale-105 transition duration-500">
                             {{-- Laravel Asset Helper --}}
-                            <img src="{{ asset('img/screenshot.png') }}" alt="Dashboard Screenshot"
+                            <img src="{{ asset('img/Screenshot.PNG') }}" alt="Dashboard Screenshot"
                                 class="w-full h-full object-cover block" />
                         </div>
 
