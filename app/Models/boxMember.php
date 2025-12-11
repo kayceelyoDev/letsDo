@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class boxMember extends Model
+class BoxMember extends Model
 {
     // 1. Explicitly define the table name to avoid confusion
     protected $table = 'box_members';
