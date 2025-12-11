@@ -15,20 +15,20 @@
         </a>
 
         <flux:navbar class="-mb-px max-lg:hidden">
-            
+
             <flux:navbar.item icon="house" :href="route('dashboard')" :current="request()->routeIs('dashboard')"
                 wire:navigate>
                 {{ __('FeedBox') }}
             </flux:navbar.item>
 
-          
-            <flux:navbar.item icon="globe" :href="route('joinfeedbox')"
-                :current="request()->routeIs('joinfeedbox')" wire:navigate>
+
+            <flux:navbar.item icon="globe" :href="route('joinfeedbox')" :current="request()->routeIs('joinfeedbox')"
+                wire:navigate>
                 {{ __('Join FeedBox') }}
             </flux:navbar.item>
 
-            <flux:navbar.item icon="user" :href="route('profile')"
-                :current="request()->routeIs('profile')" wire:navigate>
+            <flux:navbar.item icon="user" :href="route('profile')" :current="request()->routeIs('profile')"
+                wire:navigate>
                 {{ __('Profile') }}
             </flux:navbar.item>
         </flux:navbar>
@@ -91,10 +91,21 @@
 
         <flux:navlist variant="outline">
             <flux:navlist.group :heading="__('Platform')">
-                <flux:navlist.item icon="layout-grid" :href="route('dashboard')"
-                    :current="request()->routeIs('dashboard')" wire:navigate>
-                    {{ __('Dashboard') }}
-                </flux:navlist.item>
+                <flux:navbar.item icon="house" :href="route('dashboard')" :current="request()->routeIs('dashboard')"
+                    wire:navigate>
+                    {{ __('FeedBox') }}
+                </flux:navbar.item>
+
+
+                <flux:navbar.item icon="globe" :href="route('joinfeedbox')"
+                    :current="request()->routeIs('joinfeedbox')" wire:navigate>
+                    {{ __('Join FeedBox') }}
+                </flux:navbar.item>
+
+                <flux:navbar.item icon="user" :href="route('profile')" :current="request()->routeIs('profile')"
+                    wire:navigate>
+                    {{ __('Profile') }}
+                </flux:navbar.item>
             </flux:navlist.group>
         </flux:navlist>
 
