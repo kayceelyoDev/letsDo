@@ -228,7 +228,7 @@
             </div>
 
             <div class="flex gap-4">
-                <a href="#" class="text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition">
+                <a href="https://github.com/kayceelyoDev/letsDo.git" class="text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition">
                     <span class="sr-only">GitHub</span>
                     <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path fill-rule="evenodd"

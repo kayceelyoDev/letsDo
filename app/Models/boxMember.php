@@ -11,7 +11,7 @@ class BoxMember extends Model
 
     // 2. Allow these columns to be filled by your joinBox() function
     protected $fillable = [
-        'box_id',
+        '   ',
         'user_id',
         'status', 
     ];

@@ -13,6 +13,7 @@ use Flux\Flux;
 class Profile extends Component
 {
     // Edit Modal State
+    public $expanded = false;
     public $showEditModal = false;
     public $editingMessageId = null;
     public $content = '';
