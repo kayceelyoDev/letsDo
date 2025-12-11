@@ -3,8 +3,8 @@
 namespace App\Livewire;
 
 use App\Http\Requests\boxRequest;
-use App\Models\box;
-use App\Models\boxMember;
+use App\Models\Box;
+use App\Models\BoxMember;
 use Auth;
 use Livewire\Component;
 use function Livewire\Volt\rules;
@@ -18,16 +18,16 @@ class CreateBox extends Component
 
    public function createbox()
     {
-        $rules = (new boxRequest)->rules();
+        $rules = (new BoxRequest)->rules();
         $validated = $this->validate($rules);
         $validated['users_id'] = Auth::id();
 
         try {
            
-            $newBox = box::create($validated);
+            $newBox = Box::create($validated);
 
          
-            boxMember::create([
+            BoxMember::create([
                 'box_id' => $newBox->id,
                 'user_id' => Auth::id(),
                 'status' => 'approved',

@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\box;
+use App\Models\Box;
 use App\Models\boxMember;
 use Flux\Flux;
 use Livewire\Component;
@@ -14,7 +14,7 @@ class RequestFeedbox extends Component
 
     public $status;
 
-    public function mount(box $box)
+    public function mount(Box $box)
     {
         $this->box = $box;
     }
