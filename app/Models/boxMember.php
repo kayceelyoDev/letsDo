@@ -23,6 +23,6 @@ class BoxMember extends Model
     }
     public function box()
     {
-        return $this->belongsTo(box::class);
+        return $this->belongsTo(Box::class);
     }
 }

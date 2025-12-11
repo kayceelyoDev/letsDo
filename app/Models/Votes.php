@@ -24,6 +24,6 @@ class Votes extends Model
     }
 
     public function messsage(){
-        $this->belongsTo(message::class);
+        $this->belongsTo(Message::class);
     }
 }

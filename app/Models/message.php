@@ -41,6 +41,6 @@ class Message extends Model
 
     public function box()
     {
-        return $this->belongsTo(box::class, 'box_id');
+        return $this->belongsTo(Box::class, 'box_id');
     }
 }
