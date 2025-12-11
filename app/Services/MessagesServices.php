@@ -15,16 +15,19 @@ class MessagesServices
      */
     public function getMessagesForBox(Box $box, string $sortType = 'latest')
     {
-        $query = Message::query()
-            ->with(['user', 'userVotes']) // Eager load user AND the current user's vote
-            ->where('box_id', $box->id); // CRITICAL: Only get messages for this box
+        // 1. Start Query
+        $query = Message::with(['user', 'votes'])
+            ->where('box_id', $box->id);
 
+        // 2. Apply Sort/Filter Logic
         if ($sortType === 'top') {
-            // Sort by calculated score (upvotes - downvotes) is complex in SQL, 
-            // usually sorting by raw upvotes is 'good enough' for simple apps.
-            // Or strictly by the 'upvotes' column.
             $query->orderBy('upvotes', 'desc');
+        } elseif ($sortType === 'my_posts') {
+            // === NEW LOGIC ===
+            $query->where('user_id', auth()->id())
+                ->orderBy('created_at', 'desc');
         } else {
+            // Default: 'latest'
             $query->orderBy('created_at', 'desc');
         }
 
@@ -37,7 +40,7 @@ class MessagesServices
     public function createOrUpdate(int $userId, string $boxId, string $content, ?int $messageId = null): void
     {
         if ($messageId) {
-            // === UPDATE LOGIC ===
+
             $message = Message::find($messageId);
 
             if (!$message) {
@@ -54,7 +57,7 @@ class MessagesServices
             // === CREATE LOGIC ===
             Message::create([
                 'user_id' => $userId,
-                'box_id'  => $boxId,
+                'box_id' => $boxId,
                 'content' => $content,
             ]);
         }
@@ -67,7 +70,8 @@ class MessagesServices
     {
         $message = Message::find($messageId);
 
-        if (!$message) return;
+        if (!$message)
+            return;
 
         // Security: Authorize
         if ($message->user_id !== $userId) {
@@ -83,7 +87,8 @@ class MessagesServices
     public function toggleVote(int $userId, int $messageId, string $type): void
     {
         $message = Message::find($messageId);
-        if (!$message) return;
+        if (!$message)
+            return;
 
         DB::transaction(function () use ($message, $userId, $type) {
             // Check if user has already voted
@@ -96,9 +101,9 @@ class MessagesServices
                 if ($existingVote->type === $type) {
                     // 1. Remove Vote (User toggled same button)
                     $existingVote->delete();
-                    
-                    $type === 'up' 
-                        ? $message->decrement('upvotes') 
+
+                    $type === 'up'
+                        ? $message->decrement('upvotes')
                         : $message->decrement('downvotes');
                 } else {
                     // 2. Switch Vote (Up -> Down OR Down -> Up)
@@ -115,13 +120,13 @@ class MessagesServices
             } else {
                 // 3. New Vote
                 Votes::create([
-                    'user_id'    => $userId,
+                    'user_id' => $userId,
                     'message_id' => $message->id,
-                    'type'       => $type
+                    'type' => $type
                 ]);
 
-                $type === 'up' 
-                    ? $message->increment('upVotes') 
+                $type === 'up'
+                    ? $message->increment('upVotes')
                     : $message->increment('downVotes');
             }
         });

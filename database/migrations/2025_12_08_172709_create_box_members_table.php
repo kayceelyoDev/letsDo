@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignUuid('box_id')->constrained()->onDelete('cascade');
+            $table->enum('status', ['approved', 'pending', 'rejected','banned'])->default('pending');
             $table->timestamps();
         });
     }

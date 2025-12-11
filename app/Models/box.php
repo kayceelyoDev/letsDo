@@ -19,6 +19,7 @@ class box extends Model
         'privacy',
     ];
 
+
     public function user(){
         return $this->belongsTo(User::class, 'users_id');
     }
