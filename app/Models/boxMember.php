@@ -6,5 +6,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class boxMember extends Model
 {
-    //
+    // 1. Explicitly define the table name to avoid confusion
+    protected $table = 'box_members';
+
+    // 2. Allow these columns to be filled by your joinBox() function
+    protected $fillable = [
+        'box_id',
+        'user_id',
+        'status', 
+    ];
+
+    
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function box()
+    {
+        return $this->belongsTo(box::class);
+    }
 }
