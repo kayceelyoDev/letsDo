@@ -15,7 +15,6 @@
                         </span>
                     </div>
                     <div class="flex items-center gap-2 text-xs sm:text-sm text-zinc-500">
-                      
                         <span class="truncate">Curated by <span class="text-zinc-900 dark:text-zinc-200 font-medium">{{ $box->user->name }}</span></span>
                     </div>
                 </div>
@@ -77,7 +76,7 @@
     </div>
 
     {{-- STICKY TABS --}}
-    <div class="sticky top-0 z-30 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl border-b border-zinc-100 dark:border-zinc-800">
+    <div class="sticky top-0 z-10 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl border-b border-zinc-100 dark:border-zinc-800">
         <div class="max-w-2xl mx-auto px-3 sm:px-6">
             <div class="flex items-center gap-4 sm:gap-6 overflow-x-auto no-scrollbar">
                 @foreach (['latest' => 'Latest', 'top' => 'Top Rated', 'my_posts' => 'My Posts'] as $key => $label)
@@ -86,7 +85,7 @@
                         {{ $activeTab === $key ? 'text-zinc-900 dark:text-white font-semibold' : 'text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200' }}">
                         {{ $label }}
                         @if($activeTab === $key)
-                            <div class="absolute bottom-0 left-0 right-0 h-[2px] bg-zinc-900 dark:bg-white rounded-full" layoutId="underline"></div>
+                            <div class="absolute bottom-0 left-0 right-0 h-[2px] bg-zinc-900 dark:bg-white rounded-full"></div>
                         @endif
                     </button>
                 @endforeach
@@ -98,7 +97,6 @@
     <div class="max-w-2xl mx-auto px-0 sm:px-6 py-2 sm:py-3" wire:poll.5s>
         <div class="space-y-0 sm:space-y-3">
             @forelse ($userMessages as $msg)
-                {{-- Minimal padding --}}
                 <div class="group bg-white dark:bg-zinc-950 sm:bg-zinc-50/50 sm:dark:bg-zinc-900/50 sm:rounded-2xl border-b sm:border border-zinc-100 dark:border-zinc-800 px-2 py-1.5 sm:px-2.5 sm:py-2 transition-colors">
                     <div class="flex gap-2">
                         {{-- Avatar Column --}}
@@ -192,105 +190,109 @@
 
     {{-- MODALS --}}
 
-    {{-- Create/Edit Post Modal with Character Limit --}}
-    <flux:modal wire:model="showModal" class="w-full max-w-lg mx-auto my-auto">
-        <div class="space-y-4" x-data="{ charCount: $wire.entangle('content').length }">
-            <div class="flex items-center justify-between">
-                <flux:heading size="lg">{{ $editingMessageId ? 'Edit Post' : 'New Post' }}</flux:heading>
-            </div>
-            @if ($errorMessages)
-                <div class="p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100 flex gap-2">
-                    <flux:icon icon="exclamation-circle" variant="mini" class="mt-0.5 shrink-0" />
-                    <span>{{ $errorMessages }}</span>
+    {{-- Create/Edit Post Modal --}}
+    @if($showModal)
+        <flux:modal wire:model="showModal" class="z-50">
+            <div class="space-y-4" x-data="{ charCount: 0 }" x-init="charCount = ($wire.content || '').length">
+                <div class="flex items-center justify-between">
+                    <flux:heading size="lg">{{ $editingMessageId ? 'Edit Post' : 'New Post' }}</flux:heading>
                 </div>
-            @endif
-            <div>
-                <flux:textarea 
-                    wire:model.live="content" 
-                    rows="6" 
-                    placeholder="What's happening?" 
-                    class="resize-none text-base sm:text-lg border-0 bg-transparent focus:ring-0 px-0"
-                    maxlength="250"
-                    x-on:input="charCount = $event.target.value.length"
-                />
-                <div class="flex justify-end mt-2">
-                    <span class="text-xs" :class="charCount >= 250 ? 'text-red-500 font-semibold' : 'text-zinc-400'">
-                        <span x-text="charCount"></span>/250
-                    </span>
+                @if ($errorMessages)
+                    <div class="p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100 flex gap-2">
+                        <flux:icon icon="exclamation-circle" variant="mini" class="mt-0.5 shrink-0" />
+                        <span>{{ $errorMessages }}</span>
+                    </div>
+                @endif
+                <div>
+                    <flux:textarea 
+                        wire:model="content" 
+                        rows="6" 
+                        placeholder="What's happening?" 
+                        class="resize-none text-base sm:text-lg border-0 bg-transparent focus:ring-0 px-2"
+                        maxlength="250"
+                        x-on:input="charCount = $event.target.value.length"
+                    />
+                    <div class="flex justify-end mt-2">
+                        <span class="text-xs" :class="charCount >= 250 ? 'text-red-500 font-semibold' : 'text-zinc-400'">
+                            <span x-text="charCount"></span>/250
+                        </span>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 sm:gap-3 pt-2 border-t border-zinc-100 dark:border-zinc-800">
+                    <flux:button wire:click="resetModal" variant="ghost" size="sm">Cancel</flux:button>
+                    <flux:button wire:click="saveMessage" variant="primary" size="sm">{{ $editingMessageId ? 'Update' : 'Post' }}</flux:button>
                 </div>
             </div>
-            <div class="flex justify-end gap-2 sm:gap-3 pt-2 border-t border-zinc-100 dark:border-zinc-800">
-                <flux:button wire:click="resetModal" variant="ghost" size="sm">Cancel</flux:button>
-                <flux:button wire:click="saveMessage" variant="primary" size="sm">{{ $editingMessageId ? 'Update' : 'Post' }}</flux:button>
-            </div>
-        </div>
-    </flux:modal>
+        </flux:modal>
+    @endif
 
     {{-- Community Modal --}}
-    <flux:modal wire:model="showCommunityModal" class="w-full max-w-lg mx-auto my-auto max-h-[80vh]">
-        <div class="flex-1 min-h-0 flex flex-col">
-            <div class="shrink-0 pb-3 sm:pb-4 border-b border-zinc-100 dark:border-zinc-800 mb-2 sm:mb-3">
-                <flux:heading size="lg">Community</flux:heading>
-            </div>
-            
-            <div class="flex gap-4 sm:gap-6 border-b border-zinc-100 dark:border-zinc-800 shrink-0 mb-3 sm:mb-4">
-                <button wire:click="$set('communityTab', 'members')" class="pb-2 text-xs sm:text-sm font-medium border-b-2 transition-colors {{ $communityTab === 'members' ? 'border-zinc-900 text-zinc-900 dark:border-white dark:text-white' : 'border-transparent text-zinc-500' }}">
-                    Members
-                </button>
-                <button wire:click="$set('communityTab', 'requests')" class="pb-2 text-xs sm:text-sm font-medium border-b-2 transition-colors relative {{ $communityTab === 'requests' ? 'border-zinc-900 text-zinc-900 dark:border-white dark:text-white' : 'border-transparent text-zinc-500' }}">
-                    Requests
-                    @if ($this->pendingList->count() > 0)
-                        <span class="ml-1 bg-red-500 text-white text-[10px] px-1.5 rounded-full">{{ $this->pendingList->count() }}</span>
-                    @endif
-                </button>
-            </div>
+    @if($showCommunityModal)
+        <flux:modal wire:model="showCommunityModal" class="z-50">
+            <div class="flex-1 min-h-0 flex flex-col max-h-[70vh]">
+                <div class="shrink-0 pb-3 sm:pb-4 border-b border-zinc-100 dark:border-zinc-800 mb-2 sm:mb-3">
+                    <flux:heading size="lg">Community</flux:heading>
+                </div>
+                
+                <div class="flex gap-4 sm:gap-6 border-b border-zinc-100 dark:border-zinc-800 shrink-0 mb-3 sm:mb-4">
+                    <button wire:click="$set('communityTab', 'members')" class="pb-2 text-xs sm:text-sm font-medium border-b-2 transition-colors {{ $communityTab === 'members' ? 'border-zinc-900 text-zinc-900 dark:border-white dark:text-white' : 'border-transparent text-zinc-500' }}">
+                        Members
+                    </button>
+                    <button wire:click="$set('communityTab', 'requests')" class="pb-2 text-xs sm:text-sm font-medium border-b-2 transition-colors relative {{ $communityTab === 'requests' ? 'border-zinc-900 text-zinc-900 dark:border-white dark:text-white' : 'border-transparent text-zinc-500' }}">
+                        Requests
+                        @if ($this->pendingList->count() > 0)
+                            <span class="ml-1 bg-red-500 text-white text-[10px] px-1.5 rounded-full">{{ $this->pendingList->count() }}</span>
+                        @endif
+                    </button>
+                </div>
 
-            <div class="overflow-y-auto flex-1 custom-scrollbar -mr-2 pr-2">
-                @if ($communityTab === 'members')
-                    <div class="space-y-1.5 sm:space-y-2">
-                        @foreach ($this->membersList as $member)
-                            <div class="flex items-center justify-between p-2 hover:bg-zinc-50 dark:hover:bg-zinc-900 rounded-lg">
-                                <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
-                                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-xs font-bold text-zinc-500 shrink-0">
-                                        {{ substr($member->user->name, 0, 1) }}
+                <div class="overflow-y-auto flex-1 -mr-2 pr-2" style="scrollbar-width: thin;">
+                    @if ($communityTab === 'members')
+                        <div class="space-y-1.5 sm:space-y-2">
+                            @foreach ($this->membersList as $member)
+                                <div class="flex items-center justify-between p-2 hover:bg-zinc-50 dark:hover:bg-zinc-900 rounded-lg">
+                                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+                                        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-xs font-bold text-zinc-500 shrink-0">
+                                            {{ substr($member->user->name, 0, 1) }}
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <div class="text-xs sm:text-sm font-medium truncate">{{ $member->user->name }}</div>
+                                            <div class="text-[10px] text-zinc-400">Joined {{ $member->created_at->format('M Y') }}</div>
+                                        </div>
                                     </div>
-                                    <div class="min-w-0 flex-1">
-                                        <div class="text-xs sm:text-sm font-medium truncate">{{ $member->user->name }}</div>
-                                        <div class="text-[10px] text-zinc-400">Joined {{ $member->created_at->format('M Y') }}</div>
-                                    </div>
-                                </div>
-                                <flux:button icon="no-symbol" variant="ghost" size="sm" class="text-zinc-400 hover:text-red-500 shrink-0" wire:click="banMember({{ $member->user->id }})" wire:confirm="Ban this user?" />
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    @if($this->pendingList->isEmpty())
-                        <div class="text-center py-12 text-zinc-400 text-xs sm:text-sm">No pending requests</div>
-                    @else
-                        <div class="space-y-2">
-                            @foreach ($this->pendingList as $request)
-                                <div class="flex items-center justify-between p-2.5 sm:p-3 bg-zinc-50 dark:bg-zinc-900 rounded-lg gap-2">
-                                    <span class="text-xs sm:text-sm font-medium truncate flex-1 min-w-0">{{ $request->user->name }}</span>
-                                    <div class="flex gap-1.5 sm:gap-2 shrink-0">
-                                        <button wire:click="acceptRequest({{ $request->id }})" class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-green-100 text-green-600 hover:bg-green-200 transition-colors">
-                                            <flux:icon icon="check" variant="mini" />
-                                        </button>
-                                        <button wire:click="denyRequest({{ $request->id }})" class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors">
-                                            <flux:icon icon="x-mark" variant="mini" />
-                                        </button>
-                                    </div>
+                                    <flux:button icon="no-symbol" variant="ghost" size="sm" class="text-zinc-400 hover:text-red-500 shrink-0" wire:click="banMember({{ $member->user->id }})" wire:confirm="Ban this user?" />
                                 </div>
                             @endforeach
                         </div>
+                    @else
+                        @if($this->pendingList->isEmpty())
+                            <div class="text-center py-12 text-zinc-400 text-xs sm:text-sm">No pending requests</div>
+                        @else
+                            <div class="space-y-2">
+                                @foreach ($this->pendingList as $request)
+                                    <div class="flex items-center justify-between p-2.5 sm:p-3 bg-zinc-50 dark:bg-zinc-900 rounded-lg gap-2">
+                                        <span class="text-xs sm:text-sm font-medium truncate flex-1 min-w-0">{{ $request->user->name }}</span>
+                                        <div class="flex gap-1.5 sm:gap-2 shrink-0">
+                                            <button wire:click="acceptRequest({{ $request->id }})" class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-green-100 text-green-600 hover:bg-green-200 transition-colors">
+                                                <flux:icon icon="check" variant="mini" />
+                                            </button>
+                                            <button wire:click="denyRequest({{ $request->id }})" class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors">
+                                                <flux:icon icon="x-mark" variant="mini" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
                     @endif
-                @endif
+                </div>
             </div>
-        </div>
-    </flux:modal>
+        </flux:modal>
+    @endif
 
     {{-- Edit Box Modal --}}
-    <flux:modal wire:model="showEditBoxModal" class="!fixed !inset-0 !m-0 flex items-center justify-center p-4">
-        <div class="w-full max-w-md bg-white dark:bg-zinc-900 rounded-xl shadow-xl p-6">
+    @if($showEditBoxModal)
+        <flux:modal wire:model="showEditBoxModal" class="z-50">
             <div class="space-y-4">
                 <flux:heading size="lg">Box Settings</flux:heading>
                 <flux:input wire:model="edit_box_name" label="Name" />
@@ -304,37 +306,41 @@
                     <flux:button wire:click="updateBox" variant="primary" size="sm">Save</flux:button>
                 </div>
             </div>
-        </div>
-    </flux:modal>
+        </flux:modal>
+    @endif
 
     {{-- Delete Confirmation Modal --}}
-    <flux:modal wire:model="showDeleteConfirmModal" class="!fixed !inset-0 !m-0 flex items-center justify-center p-4">
-        <div class="w-full max-w-sm bg-white dark:bg-zinc-900 rounded-xl shadow-xl p-6 text-center">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <flux:icon icon="trash" class="w-5 h-5 sm:w-6 sm:h-6" />
+    @if($showDeleteConfirmModal)
+        <flux:modal wire:model="showDeleteConfirmModal" class="z-50">
+            <div class="text-center p-2">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <flux:icon icon="trash" class="w-5 h-5 sm:w-6 sm:h-6" />
+                </div>
+                <flux:heading size="lg">Delete this box?</flux:heading>
+                <p class="text-xs sm:text-sm text-zinc-500 mt-2 mb-4 sm:mb-6">All posts and data will be permanently removed.</p>
+                <div class="flex flex-col gap-2">
+                    <flux:button wire:click="deleteBox" variant="danger" class="w-full" size="sm">Delete Everything</flux:button>
+                    <flux:button wire:click="$set('showDeleteConfirmModal', false)" variant="ghost" class="w-full" size="sm">Cancel</flux:button>
+                </div>
             </div>
-            <flux:heading size="lg">Delete this box?</flux:heading>
-            <p class="text-xs sm:text-sm text-zinc-500 mt-2 mb-4 sm:mb-6">All posts and data will be permanently removed.</p>
-            <div class="flex flex-col gap-2">
-                <flux:button wire:click="deleteBox" variant="danger" class="w-full" size="sm">Delete Everything</flux:button>
-                <flux:button wire:click="$set('showDeleteConfirmModal', false)" variant="ghost" class="w-full" size="sm">Cancel</flux:button>
-            </div>
-        </div>
-    </flux:modal>
+        </flux:modal>
+    @endif
 
     {{-- Leave Confirmation Modal --}}
-    <flux:modal wire:model="showLeaveConfirmModal" class="!fixed !inset-0 !m-0 flex items-center justify-center p-4">
-        <div class="w-full max-w-sm bg-white dark:bg-zinc-900 rounded-xl shadow-xl p-6 text-center">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <flux:icon icon="arrow-right-start-on-rectangle" class="w-5 h-5 sm:w-6 sm:h-6" />
+    @if($showLeaveConfirmModal)
+        <flux:modal wire:model="showLeaveConfirmModal" class="z-50">
+            <div class="text-center p-2">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <flux:icon icon="arrow-right-start-on-rectangle" class="w-5 h-5 sm:w-6 sm:h-6" />
+                </div>
+                <flux:heading size="lg">Leave box?</flux:heading>
+                <p class="text-xs sm:text-sm text-zinc-500 mt-2 mb-4 sm:mb-6">You will need to request access to join again.</p>
+                <div class="flex flex-col gap-2">
+                    <flux:button wire:click="leaveBox" variant="danger" class="w-full" size="sm">Leave</flux:button>
+                    <flux:button wire:click="$set('showLeaveConfirmModal', false)" variant="ghost" class="w-full" size="sm">Cancel</flux:button>
+                </div>
             </div>
-            <flux:heading size="lg">Leave box?</flux:heading>
-            <p class="text-xs sm:text-sm text-zinc-500 mt-2 mb-4 sm:mb-6">You will need to request access to join again.</p>
-            <div class="flex flex-col gap-2">
-                <flux:button wire:click="leaveBox" variant="danger" class="w-full" size="sm">Leave</flux:button>
-                <flux:button wire:click="$set('showLeaveConfirmModal', false)" variant="ghost" class="w-full" size="sm">Cancel</flux:button>
-            </div>
-        </div>
-    </flux:modal>
+        </flux:modal>
+    @endif
 
 </div>

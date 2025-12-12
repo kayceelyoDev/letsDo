@@ -139,6 +139,7 @@ class Feedbox extends Component
 
     public function joinBox()
     {
+  
         $status = $this->feedboxService->joinBox($this->box, auth()->id());
 
         if ($status === 'approved') {

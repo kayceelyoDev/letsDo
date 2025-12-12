@@ -10,7 +10,7 @@
             
             <div>
                 <flux:heading size="lg">Create a New Box</flux:heading>
-                <flux:subheading>Start collecting anonymous feedback.</flux:subheading>
+                <flux:subheading>Start collecting  feedback.</flux:subheading>
             </div>
 
             <flux:input 

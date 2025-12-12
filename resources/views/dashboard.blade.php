@@ -1,6 +1,6 @@
 <x-layouts.app :title="__('Dashboard')">
     {{-- Main Wrapper: Zinc-50 for subtle contrast against white cards --}}
-    <div class="min-h-screen py-10 sm:py-16 bg-zinc-50 dark:bg-black text-zinc-900 dark:text-zinc-100">
+    <div class="min-h-screen py-10 sm:py-16  text-zinc-900 dark:text-zinc-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
 
             {{-- 1. PAGE HEADER SECTION --}}

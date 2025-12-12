@@ -93,7 +93,7 @@
     </flux:header>
 
     {{-- MOBILE SIDEBAR --}}
-    <flux:sidebar stashable sticky class="lg:hidden border-r border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900">
+    <flux:sidebar stashable sticky class="lg:hidden border-r s border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900">
         
         <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
