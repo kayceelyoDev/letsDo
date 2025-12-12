@@ -38,7 +38,7 @@ return [
     'mailers' => [
 
         'smtp' => [
-            'transport' => 'smtp',
+            'transport' => 'sendgrid',
             'scheme' => env('MAIL_SCHEME'),
             'url' => env('MAIL_URL'),
             'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
