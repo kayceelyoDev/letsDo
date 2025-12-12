@@ -50,6 +50,10 @@ return [
             'url' => env('MAIL_URL'),
             'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
             'port' => env('MAIL_PORT', 2525),
+
+            //  ADD THIS LINE HERE  ↓↓
+            'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+
             'username' => env('MAIL_USERNAME'),
             'password' => env('MAIL_PASSWORD'),
             'timeout' => 5,
