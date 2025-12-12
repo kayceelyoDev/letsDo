@@ -35,13 +35,13 @@ return [
     |
     */
 
-    'sendgrid' => [
-        'api_key' => env('SENDGRID_API_KEY'),
-    ],
+
 
     'mailers' => [
         'sendgrid' => [
             'transport' => 'sendgrid',
+            // This line is CRITICAL. It passes the key to the provider.
+            'api_key' => env('SENDGRID_API_KEY'),
         ],
 
         'smtp' => [
